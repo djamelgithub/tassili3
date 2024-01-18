@@ -1,0 +1,219 @@
+import React, { useState  } from 'react'
+import { FormGroup } from '@material-ui/core';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+ 
+
+import FormControlLabel from '@mui/material/FormControlLabel';
+ 
+ 
+  
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Checkbox from '@mui/material/Checkbox';
+ 
+ import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+ 
+import Button from '@mui/material/Button';
+
+
+ 
+ 
+
+const App = () => {
+
+  
+
+    const initialState = {
+        
+        selectedOption: '',
+       
+       
+        option: '',
+        hasFeature1: false,
+      
+        hasFeature2: false,
+        
+ 
+        additionalCheckbox1: false, // Campo adicional para el Checkbox 1
+        additionalCheckbox2: false, // Campo adicional para el Checkbox 2
+
+
+
+    };
+ 
+    const [postData, setPostdata] = useState(initialState);
+   
+  
+
+ 
+   
+
+ 
+
+  
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+     
+ 
+        setPostdata(initialState);
+
+        
+ 
+    };
+ 
+
+ 
+
+
+    return (
+
+ 
+                    <Card>
+                        <CardContent>
+
+                            <div className="status_modal">
+                                <form onSubmit={handleSubmit}>
+
+                                    <FormGroup>
+                                        <div className="status_header">
+                                            <h5 className="m-0">Create Post</h5>
+                                           
+                                        </div>
+                                    </FormGroup>
+
+                                    <div className="status_body">
+
+
+                                    <FormGroup>
+                                    <hr></hr>
+                        
+ 
+
+
+                <FormControl>
+                  <InputLabel id="option-label">Seleccione una opción</InputLabel>
+                  <Select
+                    labelId="option-label"
+                    value={postData.option}
+                    onChange={(e) =>
+                      setPostdata({ ...postData, option: e.target.value })
+                    }
+                  >
+                    <MenuItem value="feature1">Característica 1</MenuItem>
+                    <MenuItem value="feature2">Característica 2</MenuItem>
+                  </Select>
+                </FormControl>
+              </FormGroup>
+
+              {postData.option === 'feature1' && (
+                <div className="option-details">
+                  <FormGroup row>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={postData.hasFeature1}
+                          onChange={(e) =>
+                            setPostdata({
+                              ...postData,
+                              hasFeature1: e.target.checked,
+                            })
+                          }
+                        />
+                      }
+                      label="Tiene Característica 1"
+                    />
+                    
+                  </FormGroup>
+                </div>
+              )}
+
+              {postData.option === 'feature2' && (
+                <div className="option-details">
+                  <FormGroup row>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={postData.hasFeature2}
+                          onChange={(e) =>
+                            setPostdata({
+                              ...postData,
+                              hasFeature2: e.target.checked,
+                            })
+                          }
+                        />
+                      }
+                      label="Tiene Característica 2"
+                    />
+                    
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={postData.additionalCheckbox1}
+                          onChange={(e) =>
+                            setPostdata({
+                              ...postData,
+                              additionalCheckbox1: e.target.checked,
+                            })
+                          }
+                        />
+                      }
+                      label="Opción Adicional 1"
+                    />
+                  
+                   
+                  </FormGroup>
+                </div>
+              )}
+
+
+
+
+
+ 
+
+
+                                        <br></br>
+
+
+
+
+
+
+
+
+
+                                      
+
+                                    </div>
+
+                                    <div className="status_footer">
+                                        <Button
+                                            variant="contained"
+                                            color="secondary"
+                                            fullWidth
+                                            type="submit"
+                                        >
+                                            Post
+                                        </Button>
+                                    </div>
+
+                                </form>
+                            </div>
+
+                        </CardContent >
+                    </Card >
+                
+        
+
+
+
+
+
+
+    )
+}
+
+export default App

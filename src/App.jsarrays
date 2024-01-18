@@ -1,0 +1,54 @@
+/*import Typography from '@mui/material/Typography';
+import Icon from '@mui/material/Icon';
+
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import ListGroup from 'react-bootstrap/ListGroup';*/
+//import { useState } from 'react';
+
+ 
+ objeto = {
+  nombre: 'djamel',
+  epellido: 'baouali',
+  edad: '51',
+  arraydjamel :[
+    "selin", 'safa', 'yamina', 'racha', 'malina',]
+}
+
+ 
+const arraynumero = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+const array = ["selin", 'safa', 'yamina', 'racha', 'malina']
+const segundoarray = [...array, 'djamel', objeto.nombre,]
+//const tercerarray = [...segundoarray, arraynumero, 'gggggg']
+//const ooo = [...segundoarray, arraynumero.filter(a => a !== 5 && a !== 6 & a !== 7)]
+const App = () => {
+
+   
+  const result =  arraydjamel.map(res => (
+
+    res
+  )
+    
+  ) 
+  return (
+
+    <div>
+      {
+     
+  result   
+      }
+
+{
+  objeto.nombre
+}
+    </div>
+
+
+
+
+  )
+
+
+
+
+}
+export default App

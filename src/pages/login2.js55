@@ -1,0 +1,39 @@
+import React, { useState, useEffect } from 'react'
+
+import { login } from '../redux/actions/authAction'
+ 
+
+const Login2 = () => {
+    const initialState = { email: '', password: '' }
+    const [userData, setUserData] = useState(initialState)
+    const { email, password } = userData
+
+    const handleChangeInput = e => {
+        const { name, value } = e.target
+        setUserData({ ...userData, [name]: value })
+    }
+
+    const handleSubmit = e => {
+        e.preventDefault()
+        dispatch(login(userData))
+    }
+
+    return (
+        <div >
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <input type="email" onChange={handleChangeInput} name="email" value={email} />
+
+                    <input type="submit" onChange={handleChangeInput} name="password" value={password} />
+
+                    <button type="submit" >
+                        enviar
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    )
+}
+
+export default Login2

@@ -1,0 +1,456 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState } from 'react';
+import { Button, Container, Form, Nav, Navbar, NavDropdown, Offcanvas } from 'react-bootstrap';
+import { Link } from 'react-router-dom'
+import { GLOBALTYPES } from '../../redux/actions/globalTypes'
+import { useSelector, useDispatch } from 'react-redux'
+import { logout } from '../../redux/actions/authAction'
+import Avatar from '../Avatar'
+
+import Wilayacommune from '../searching/Wilayacommune';
+import { getPosts, POST_TYPES } from '../../redux/actions/postAction';
+import { getDataAPI } from '../../utils/fetchData';
+
+import SearchPosts from '../SearchPosts';
+import Preciosalaaa from '../ranges/Preciosalaaa';
+
+
+const Header = () => {
+
+    const { auth, theme, homePosts } = useSelector(state => state)
+    const expand = false;
+
+
+    const dispatch = useDispatch()
+
+    const [currentCategoria, setCurrentCategoria] = useState('posts'); // Agregué esta línea
+
+    const [showSalaForm, setShowSalaForm] = useState(false); // Cambié a false
+    const [showServiciosForm, setShowServiciosForm] = useState(false); // Cambié a false
+
+    const handleChangeCategoria = (categoria) => {
+        setCurrentCategoria(categoria);
+
+        // Actualizar el estado para mostrar/ocultar formularios
+        if (categoria === 'posts') {
+            setShowSalaForm(true);
+            setShowServiciosForm(false);
+        } else if (categoria === 'servicios') {
+            setShowSalaForm(false);
+            setShowServiciosForm(true);
+        }
+    };
+
+    const [, setSearchResults] = useState([]);
+    const [, setTotalResults] = useState(0);
+    const [showSearchFields, setShowSearchFields] = useState(false);
+    const [contentValue, setContent] = useState('');
+
+    const [wilayaValue, setWilayaValue] = useState('');
+    const [communeValue, setCommuneValue] = useState('');
+
+    const [prixsalle, setPrixsalle] = useState([100, 3000]);
+
+    const [personNameValue, setPersonName] = useState([]);
+    const [eventosValue, setEventos] = useState([]);
+
+    const Preciosala = (value) => {
+        setPrixsalle(value);
+    };
+
+
+    const handleReset = () => {
+        setContent('');
+        setWilayaValue('');
+        setCommuneValue('');
+        setPersonName('');
+
+        setEventos('');
+
+        setPrixsalle([10, 300]);
+
+        dispatch(getPosts(auth.token));
+    };
+
+
+
+
+
+
+      const handleBuscar = async () => {
+
+    try {
+
+      let url = `/posts?limit=${homePostsReducer.page * 9}`;
+
+      if (tipoTransaccion) {
+        url += `&ventalocation=${tipoTransaccion}`;
+      }
+
+
+      if (anoVente[0] !== 1990 || anoVente[1] !== 2023) {
+        url += `&minAnoVente=${anoVente[0]}&maxAnoVente=${anoVente[1]}`;
+      }
+      if (pricioVente[0] !== 100 || pricioVente[1] !== 3000) {
+        url += `&minpricioVente=${pricioVente[0]}&maxpricioVente=${pricioVente[1]}`;
+      }
+
+      if (precioLocacion[0] !== 2000 || precioLocacion[1] !== 50000) {
+        url += `&minprecioLocacion=${precioLocacion[0]}&maxprecioLocacion=${precioLocacion[1]}`;
+      }
+      if (kilometraje[0] !== 0 || kilometraje[1] !== 500000) {
+        url += `&minkilometraje=${kilometraje[0]}&maxkilometrraje=${kilometraje[1]}`;
+      }
+
+
+      if (wilayaValue) {
+        url += `&wilaya=${wilayaValue}`;
+      }
+      if (ventaValue) {
+        url += `&venta=${ventaValue}`;
+      }
+      if (communeValue) {
+        url += `&commune=${communeValue}`;
+      }
+
+      if (marcaValue) {
+        url += `&marca=${marcaValue}`;
+      }
+
+
+      if (papelesValue) {
+        url += `&papeles=${papelesValue}`;
+      }
+
+      if (inergiaValue) {
+        url += `&inergia=${inergiaValue}`;
+      }
+
+      if (transmicionValue) {
+        url += `&transmicion=${transmicionValue}`;
+      }
+
+      if (papelesValue) {
+        url += `&papeles=${papelesValue}`;
+      }
+
+
+      if (colorValue) {
+        url += `&color=${colorValue}`;
+      }
+
+
+      const response = await getDataAPI(url, auth.token);
+      setSearchResults(response.data.automobiles); // Resetea los resultados de búsqueda
+      setTotalResults(response.data.result);
+
+
+
+      dispatch({
+        type: POST_TYPES.GET_POSTS,
+        payload: { ...response.data, page: homePostsReducer.page + 1 },
+      });
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+  const avatarSrc = auth?.user?.avatar;
+  const username = auth?.user?.username;
+
+    return (
+        <Navbar expand={expand} className="bg-body-tertiary mb-3">
+            <Container fluid>
+                <Navbar.Brand href="/" style={{ fontSize: '24px', color: 'blue' }}>Tassili</Navbar.Brand>
+
+
+
+                <SearchPosts />
+
+
+                <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`} />
+                <Navbar.Offcanvas
+                    id={`offcanvasNavbar-expand-${expand}`}
+                    aria-labelledby={`offcanvasNavbarLabel-expand-${expand}`}
+                    placement="end"
+                >
+
+
+                    <Offcanvas.Header closeButton />
+                    <Offcanvas.Body style={{ maxWidth: 'auto' }}>
+
+                        <Nav style={{ maxWidth: 'auto' }}  >
+
+                            {auth.token ? (
+                                <>
+                                    <li className="nav-item dropdown" style={{ opacity: 1 }}>
+                                        <span
+                                            className="nav-link position-relative"
+                                            id="navbarDropdown"
+                                            role="button"
+                                            data-toggle="dropdown"
+                                            aria-haspopup="true"
+                                            aria-expanded="false"
+                                        >
+
+
+                                        </span>
+                                        <div
+                                            className="dropdown-menu"
+                                            aria-labelledby="navbarDropdown"
+                                            style={{ transform: 'translateX(75px)' }}
+                                        >
+
+                                        </div>
+                                    </li>
+
+                                    {auth.user.role === "admin" ? (
+                                        <li className="nav-item dropdown  bg-primary " style={{
+                                            opacity: 1,
+
+                                        }}>
+                                            <span
+                                                className="nav-link dropdown-toggle"
+                                                id="adminDropdown"
+                                                role="button"
+                                                data-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"
+                                            >
+                                                <Avatar src={auth.user.avatar} size="medium-avatar" />
+                                            </span>
+                                            <div className="dropdown-menu" aria-labelledby="adminDropdown">
+
+                                                <Link className="dropdown-item" to='/pages/provacodigo'>
+                                                    provacodigo
+                                                </Link>
+
+                                                <Link className="dropdown-item" to='/servicios'>
+                                                    servicios
+                                                </Link>
+
+                                                <Link className="dropdown-item" to={`/profile/${auth.user._id}`}>
+                                                    Profil
+                                                </Link>
+                                                <Link className="dropdown-item" to='/categoriaslista/cervices'>
+                                                    publicar anuncio
+                                                </Link>
+                                                <Link className="dropdown-item" to='/pages/mapa'>
+                                                    mapa
+                                                </Link>
+                                                <Link className="dropdown-item" to='/pages/provacodigo'>
+                                                    prova codigo
+                                                </Link>
+
+
+                                                <Link className="dropdown-item" to='/pages/filterss'>
+                                                    filters
+                                                </Link>
+                                                <Link className="dropdown-item" to='/pages/administracion/index'>
+                                                    administracion index
+                                                </Link>
+                                                <label
+                                                    htmlFor="theme"
+                                                    className="dropdown-item"
+                                                    onClick={() =>
+                                                        dispatch({
+                                                            type: GLOBALTYPES.THEME,
+                                                            payload: !theme,
+                                                        })
+                                                    }
+                                                >
+                                                    {theme ? 'Light mode' : 'Dark mode'}
+                                                </label>
+                                                <div className="dropdown-divider"></div>
+                                                <Link
+                                                    className="dropdown-item"
+                                                    to="/"
+                                                    onClick={() => dispatch(logout())}
+                                                >
+                                                    Se déconnecter
+                                                </Link>
+                                            </div>
+                                        </li>
+                                    ) : (
+                                        // Aquí puedes agregar lógica adicional para usuarios normales
+                                        <li className="nav-item dropdown" style={{ opacity: 1 }}>
+                                            <span
+                                                className="nav-link dropdown-toggle"
+                                                id="userDropdown"
+                                                role="button"
+                                                data-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"
+                                            >
+                                                <Avatar src={auth.user.avatar} size="medium-avatar" />
+                                            </span>
+                                            <div className="dropdown-menu" aria-labelledby="userDropdown">
+                                                <Link className="dropdown-item" to='/pages/provacodigo'>
+                                                    provacodigo
+                                                </Link>
+
+
+                                                <Link className="dropdown-item" to={`/profile/${auth.user._id}`}>
+                                                    Profil
+                                                </Link>
+                                                <Link className="dropdown-item" to='/pages/categoriaslista/cervices'>
+                                                    publicar anuncio
+                                                </Link>
+                                                <Link className="dropdown-item" to='/pages/mapa'>
+                                                    mapa
+                                                </Link>
+
+                                                <Link className="dropdown-item" to='/pages/provacodigo'>
+                                                    prova codigo
+                                                </Link>
+
+
+                                                <Link className="dropdown-item" to='/pages/filterss'>
+                                                    filters
+                                                </Link>
+                                                <Link className="dropdown-item" to='/pages/cervicios'>
+                                                    Cervicios
+                                                </Link>
+                                                <Link className="dropdown-item" to='/pages/administracion/index'>
+                                                    administracion index
+                                                </Link>
+                                                <label
+                                                    htmlFor="theme"
+                                                    className="dropdown-item"
+                                                    onClick={() =>
+                                                        dispatch({
+                                                            type: GLOBALTYPES.THEME,
+                                                            payload: !theme,
+                                                        })
+                                                    }
+                                                >
+                                                    {theme ? 'Light mode' : 'Dark mode'}
+                                                </label>
+                                                <div className="dropdown-divider"></div>
+                                                <Link
+                                                    className="dropdown-item"
+                                                    to="/"
+                                                    onClick={() => dispatch(logout())}
+                                                >
+                                                    Se déconnecter
+                                                </Link>
+                                            </div>
+                                        </li>
+                                    )}
+                                </>
+                            ) : (
+                                <>
+                                    <li className="nav-item">
+                                        <Link className="nav-link " style={{ color: '#80DEEA' }} to="/login">
+                                            <i className="fa fa-user" style={{ color: 'blue', marginRight: '5px' }}></i>
+                                            {' '}    Connexion
+                                        </Link>
+                                    </li>
+
+                                </>
+                            )}
+
+
+
+
+                        </Nav>
+
+                        <div className='card-title mt-4  '>
+                            <h5>Recherche avancee:</h5>
+                        </div>
+                        <form className="d-flex" style={{ width: '100%' }}  >
+                            <div className='card-body  form-group' style={{ width: '100%' }} >
+
+
+
+                                <div className="search-container  mb-4 mt-4">
+                                    <Wilayacommune
+                                        selectedWilaya={wilayaValue}
+                                        setSelectedWilaya={setWilayaValue}
+                                        selectedCommune={communeValue}
+                                        setSelectedCommune={setCommuneValue} />
+                                </div>
+
+                                <Form.Control
+                                    type="text"
+                                    name='contentValue'
+                                    value={contentValue}
+                                    placeholder="Titre"
+                                    className="mb-4"
+
+                                    onChange={(e) => setContent(e.target.value)}
+                                />
+
+                                < Preciosalaaa Preciosala={Preciosala} />
+
+
+
+
+
+                                <div className='card-body form-group' style={{ width: '100%' }}>
+                                    <div className="search-container mb-4 mt-4">
+                                        <Wilayacommune
+                                            selectedWilaya={wilayaValue}
+                                            setSelectedWilaya={setWilayaValue}
+                                            selectedCommune={communeValue}
+                                            setSelectedCommune={setCommuneValue}
+                                        />
+                                    </div>
+
+                                    <Form.Control
+                                        type="text"
+                                        name='contentValue'
+                                        value={contentValue}
+                                        placeholder="Titre"
+                                        className="mb-4"
+                                        onChange={(e) => setContent(e.target.value)}
+                                    />
+
+                                    <Preciosalaaa Preciosala={Preciosala} />
+
+                                    <div className='mt-4'>
+                                        {showSalaForm && (
+                                            <Button
+                                                type="button"
+                                                onClick={() => handleBuscar(currentCategoria)}
+                                                className="btn btn-primary btn-block"
+                                            >
+                                                Filtrar Sala
+                                            </Button>
+                                        )}
+
+                                        {showServiciosForm && (
+                                            <Button
+                                                type="button"
+                                                onClick={() => handleBuscar(currentCategoria)}
+                                                className="btn btn-primary btn-block"
+                                            >
+                                                Filtrar Servicios
+                                            </Button>
+                                        )}
+
+                                    </div>
+                                </div>
+
+
+
+
+
+
+
+                            </div>
+
+
+
+
+                        </form>
+                    </Offcanvas.Body>
+                </Navbar.Offcanvas>
+            </Container>
+        </Navbar>
+    );
+}
+
+export default Header;
