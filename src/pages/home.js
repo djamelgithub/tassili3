@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
@@ -13,15 +13,17 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { logout } from '../redux/actions/authAction';
 import Servicioss from '../components/homeservicio/Servicioss';
- 
- 
+
+
 //import Avatar from '../components/Avatar'         <Avatar src={auth.user.avatar} size="medium-avatar" />      </div>
 let scroll = 0;
 const Home = () => {
   const { auth, homePosts, homeServicios } = useSelector(state => state);
+  
 
- 
- 
+  const [showCarousel, setShowCarousel] = useState(true);
+  const [showPosts, setShowPosts] = useState(true);
+  const [showServicios, setShowServicios] = useState(true);
   const isAuthenticated = !!auth.token;
   const dispatch = useDispatch();
 
@@ -84,9 +86,10 @@ const Home = () => {
 
   const handleSidebarToggle = () => {
     // Lógica para mostrar/ocultar la barra lateral, si es necesario
+    setShowCarousel(!showCarousel);  // Modifica el estado según la lógica
+    setShowPosts(!showPosts);
+    setShowServicios(!showServicios);
   };
-
- 
 
   return (
 
@@ -260,67 +263,87 @@ const Home = () => {
 
               </ul>
 
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             </div>
           </div>
         </nav >
- 
-        <main  >
+
+    
 
 
 
-        <div>
-      <div className="page-wrapper chiller-theme toggled">
-        <button id="show-sidebar" className="btn btn-sm btn-dark" onClick={handleSidebarToggle}>
-          <i className="fas fa-bars" />
-        </button>
-        
-        <main>
- 
-            <div className="carousel-wrapper mt-2">
-              <Carousel infiniteLoop useKeyboardArrows autoPlay showThumbs={false}>
+          <div>
+            <div className="page-wrapper chiller-theme toggled">
+              <button id="show-sidebar" className="btn btn-sm btn-dark" onClick={handleSidebarToggle}>
+                <i className="fas fa-bars" />
+              </button>
+           
+
+              <main>
+                {showCarousel && (
+                  <div className="carousel-wrapper mt-2">
+                    <Carousel infiniteLoop useKeyboardArrows autoPlay showThumbs={false}>
+                      {/* Contenido del carrusel */}
+                      <div>
+                        <img src="00.jpg" alt="Descripción 1" style={{ width: '100%', height: '400px' }} />
+                      </div>
+                      <div>
+                        <img src="11.jpg" alt="Descripción 2" style={{ width: '100%', height: '400px' }} />
+                      </div>
+                      <div>
+                        <img src="22.jpg" alt="Descripción 3" style={{ width: '100%', height: '400px' }} />
+                      </div>
+                    </Carousel>
+                  </div>
+                )}
+
+
+                {showPosts && (
+                  <div className="card-body">
+                    {homePosts.loading ? (
+                      <img src={LoadIcon} alt="loading" className="d-block mx-auto" />
+                    ) : homePosts.result === 0 && homePosts.posts.length === 0 ? (
+                      <h2 className="text-center my-4">Pas d'article Salle</h2>
+                    ) : (
+                      <Posts posts={homePosts.posts} />
+                    )}
+                  </div>
+                )}
+
+                {showServicios && (
+                  <div>
+                    {homeServicios.loading ? (
+                      <img src={LoadIcon} alt="loading" className="d-block mx-auto" />
+                    ) : homeServicios.result === 0 && homeServicios.servicios.length === 0 ? (
+                      <h2 className="text-center my-4">Pas d'article Cervices</h2>
+                    ) : (
+                      <Servicioss />
+                    )}
+                  </div>
+                )}
+              </main>
+            </div>
+          </div>
+
        
-                <div>
-                  <img src="00.jpg" alt="Descripción 1" style={{ width: '100%', height: '400px' }} />
-                </div>
-                <div>
-                  <img src="11.jpg" alt="Descripción 2" style={{ width: '100%', height: '400px' }} />
-                </div>
-                <div>
-                  <img src="22.jpg" alt="Descripción 3" style={{ width: '100%', height: '400px' }} />
-                </div>
-              </Carousel>
-            </div>
-         
-          
-         
-            <div className="card-body">
-              {homePosts.loading ? (
-                <img src={LoadIcon} alt="loading" className="d-block mx-auto" />
-              ) : homePosts.result === 0 && homePosts.posts.length === 0 ? (
-                <h2 className="text-center my-4">Pas d'article Salle</h2>
-              ) : (
-                <Posts  />
-              )}
-            </div>
-        
-
- 
-            <div>
-              {homeServicios.loading ? (
-                <img src={LoadIcon} alt="loading" className="d-block mx-auto" />
-              ) : homeServicios.result === 0 && homeServicios.servicios.length === 0 ? (
-                <h2 className="text-center my-4">Pas d'article Cervices</h2>
-              ) : (
-                <Servicioss />
-              )}
-            </div>
-     
-        </main>
-      </div>
-    </div>
-
-        </main>
 
       </div >
 

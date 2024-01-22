@@ -14,10 +14,17 @@ import { getDataAPI } from '../../utils/fetchData';
 import SearchPosts from '../SearchPosts';
 import Preciosalaaa from '../ranges/Preciosalaaa';
 
+import { SERVICIO_TYPES } from '../../redux/actions/servicioAction';
+
+import { FormGroup } from '@material-ui/core';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
 
 const Header = () => {
 
-    const { auth, theme, homePosts } = useSelector(state => state)
+    const { auth, theme, homePosts,homeServicios } = useSelector(state => state)
     const expand = false;
 
 
@@ -27,7 +34,7 @@ const Header = () => {
 
     const [showSalaForm, setShowSalaForm] = useState(false); // Cambié a false
     const [showServiciosForm, setShowServiciosForm] = useState(false); // Cambié a false
-
+    const [servicioData, setServiciodata] = useState({ optionservicios: [] });
     const handleChangeCategoria = (categoria) => {
         setCurrentCategoria(categoria);
 
@@ -45,6 +52,9 @@ const Header = () => {
     const [, setTotalResults] = useState(0);
     const [showSearchFields, setShowSearchFields] = useState(false);
     const [contentValue, setContent] = useState('');
+    const [tipoTransaccion, setTipoTransaccion] = useState('');
+
+ 
 
     const [wilayaValue, setWilayaValue] = useState('');
     const [communeValue, setCommuneValue] = useState('');
@@ -53,112 +63,60 @@ const Header = () => {
 
     const [personNameValue, setPersonName] = useState([]);
     const [eventosValue, setEventos] = useState([]);
-
-    const Preciosala = (value) => {
-        setPrixsalle(value);
-    };
-
-
+  
     const handleReset = () => {
-        setContent('');
-        setWilayaValue('');
-        setCommuneValue('');
-        setPersonName('');
+      setContent('');
+ 
+ 
 
-        setEventos('');
-
-        setPrixsalle([10, 300]);
-
-        dispatch(getPosts(auth.token));
-    };
+      dispatch(getPosts(auth.token));
+  };
 
 
 
 
 
 
-      const handleBuscar = async () => {
-
+  const handleBuscar = async () => {
     try {
+      let url;
+      let dispatchType;
+  
+      if (currentCategoria === 'servicios') {
+        url = `/servicios?limit=${homeServicios.page * 9}`;
 
-      let url = `/posts?limit=${homePostsReducer.page * 9}`;
-
-      if (tipoTransaccion) {
-        url += `&ventalocation=${tipoTransaccion}`;
+      // Verifica si hay alguna opción seleccionada en optionservicios
+      if (servicioData.optionservicios && servicioData.optionservicios.length > 0) {
+        url += `&optionservicios=${encodeURIComponent(servicioData.optionservicios.join(','))}`;
       }
 
-
-      if (anoVente[0] !== 1990 || anoVente[1] !== 2023) {
-        url += `&minAnoVente=${anoVente[0]}&maxAnoVente=${anoVente[1]}`;
+      dispatchType = SERVICIO_TYPES.GET_SERVICIOS;
+      } else {
+        url = `/posts?limit=${homePosts.page * 9}`;
+  
+        if (tipoTransaccion) url += `&ventalocation=${tipoTransaccion}`;
+        // Agrega otras condiciones según sea necesario para la categoría "posts"
+  
+        dispatchType = POST_TYPES.GET_POSTS;
       }
-      if (pricioVente[0] !== 100 || pricioVente[1] !== 3000) {
-        url += `&minpricioVente=${pricioVente[0]}&maxpricioVente=${pricioVente[1]}`;
+  
+      if (contentValue) {
+        url += `&content=${contentValue}`;
       }
-
-      if (precioLocacion[0] !== 2000 || precioLocacion[1] !== 50000) {
-        url += `&minprecioLocacion=${precioLocacion[0]}&maxprecioLocacion=${precioLocacion[1]}`;
-      }
-      if (kilometraje[0] !== 0 || kilometraje[1] !== 500000) {
-        url += `&minkilometraje=${kilometraje[0]}&maxkilometrraje=${kilometraje[1]}`;
-      }
-
-
-      if (wilayaValue) {
-        url += `&wilaya=${wilayaValue}`;
-      }
-      if (ventaValue) {
-        url += `&venta=${ventaValue}`;
-      }
-      if (communeValue) {
-        url += `&commune=${communeValue}`;
-      }
-
-      if (marcaValue) {
-        url += `&marca=${marcaValue}`;
-      }
-
-
-      if (papelesValue) {
-        url += `&papeles=${papelesValue}`;
-      }
-
-      if (inergiaValue) {
-        url += `&inergia=${inergiaValue}`;
-      }
-
-      if (transmicionValue) {
-        url += `&transmicion=${transmicionValue}`;
-      }
-
-      if (papelesValue) {
-        url += `&papeles=${papelesValue}`;
-      }
-
-
-      if (colorValue) {
-        url += `&color=${colorValue}`;
-      }
-
-
+  
       const response = await getDataAPI(url, auth.token);
-      setSearchResults(response.data.automobiles); // Resetea los resultados de búsqueda
-      setTotalResults(response.data.result);
-
-
-
+  
       dispatch({
-        type: POST_TYPES.GET_POSTS,
-        payload: { ...response.data, page: homePostsReducer.page + 1 },
+        type: dispatchType,
+        payload: { ...response.data, page: currentCategoria === 'servicios' ? homeServicios.page + 1 : homePosts.page + 1 },
       });
-
+  
     } catch (error) {
       console.error(error);
     }
   };
-
-
-  const avatarSrc = auth?.user?.avatar;
-  const username = auth?.user?.username;
+  
+ 
 
     return (
         <Navbar expand={expand} className="bg-body-tertiary mb-3">
@@ -360,92 +318,119 @@ const Header = () => {
                         <div className='card-title mt-4  '>
                             <h5>Recherche avancee:</h5>
                         </div>
-                        <form className="d-flex" style={{ width: '100%' }}  >
-                            <div className='card-body  form-group' style={{ width: '100%' }} >
+                        <form>
+                                    <div>
+                                        <select
+                                            value={tipoTransaccion}
+                                            onChange={(e) => setTipoTransaccion(e.target.value)}
+                                            className="form-control mx-2 mb-2 mt-2"
+                                        >
+                                            <option value="">Type de tranzacction</option>
+                                            <option value="Sala">Sala</option>
+                                            <option value="Servicio">Servicios</option>
+                                        </select>
 
+                                        {tipoTransaccion === 'Sala' && (
+                                            <div className='card-body form-group' style={{ width: '100%' }}>
+                                                <div className="search-container mb-4 mt-4">
+                                                    <Wilayacommune
+                                                        selectedWilaya={wilayaValue}
+                                                        setSelectedWilaya={setWilayaValue}
+                                                        selectedCommune={communeValue}
+                                                        setSelectedCommune={setCommuneValue}
+                                                    />
+                                                </div>
 
+                                                <Form.Control
+                                                    type="text"
+                                                    name='contentValue'
+                                                    value={contentValue}
+                                                    placeholder="Titrbbbbe"
+                                                    className="mb-4"
+                                                    onChange={(e) => setContent(e.target.value)}
+                                                />
 
-                                <div className="search-container  mb-4 mt-4">
-                                    <Wilayacommune
-                                        selectedWilaya={wilayaValue}
-                                        setSelectedWilaya={setWilayaValue}
-                                        selectedCommune={communeValue}
-                                        setSelectedCommune={setCommuneValue} />
-                                </div>
+                                       
 
-                                <Form.Control
-                                    type="text"
-                                    name='contentValue'
-                                    value={contentValue}
-                                    placeholder="Titre"
-                                    className="mb-4"
+                                                <div className='mt-4'>
+                                                  
+                                                   
+                                                    {showServiciosForm && (
+                                                        <Button
+                                                            type="button"
+                                                            onClick={() => handleBuscar()}
+                                                            className="btn btn-primary btn-block"
+                                                        >
+                                                            Filtrar Servicios
+                                                        </Button>
+                                                    )}
 
-                                    onChange={(e) => setContent(e.target.value)}
-                                />
+                                                </div>
+                                            </div>
 
-                                < Preciosalaaa Preciosala={Preciosala} />
-
-
-
-
-
-                                <div className='card-body form-group' style={{ width: '100%' }}>
-                                    <div className="search-container mb-4 mt-4">
-                                        <Wilayacommune
-                                            selectedWilaya={wilayaValue}
-                                            setSelectedWilaya={setWilayaValue}
-                                            selectedCommune={communeValue}
-                                            setSelectedCommune={setCommuneValue}
-                                        />
-                                    </div>
-
-                                    <Form.Control
-                                        type="text"
-                                        name='contentValue'
-                                        value={contentValue}
-                                        placeholder="Titre"
-                                        className="mb-4"
-                                        onChange={(e) => setContent(e.target.value)}
-                                    />
-
-                                    <Preciosalaaa Preciosala={Preciosala} />
-
-                                    <div className='mt-4'>
-                                        {showSalaForm && (
-                                            <Button
-                                                type="button"
-                                                onClick={() => handleBuscar(currentCategoria)}
-                                                className="btn btn-primary btn-block"
-                                            >
-                                                Filtrar Sala
-                                            </Button>
                                         )}
 
-                                        {showServiciosForm && (
-                                            <Button
-                                                type="button"
-                                                onClick={() => handleBuscar(currentCategoria)}
-                                                className="btn btn-primary btn-block"
-                                            >
-                                                Filtrar Servicios
-                                            </Button>
+                                        {tipoTransaccion === 'Servicio' && (
+
+
+
+                                            <div className='card-body mb-2'>
+                                                <FormGroup>
+                                                    <FormControl>
+                                                        <InputLabel id="option-label">Option Services de la salle de fête</InputLabel>
+
+                                                        <Select
+                                                            labelId="option-label"
+                                                            value={servicioData.optionservicios}
+                                                            onChange={(e) => setServiciodata({ ...servicioData, optionservicios: e.target.value })}
+                                                        >
+                                                            <MenuItem value="planificacionevnevenements">Services de Planification de événements</MenuItem>
+                                                            <MenuItem value="organisasionmariage">Organisations de mariage</MenuItem>
+                                                            <MenuItem value="mobilierequipement">Location de Mobilier et Équipement</MenuItem>
+                                                            <MenuItem value="decorationallefetes">Décoration Des Salles Des Fêtes</MenuItem>
+                                                            <MenuItem value="espaceenements">Espace pour les événements</MenuItem>
+                                                            <MenuItem value="cateringbanquet">Catering et Banquet </MenuItem>
+                                                            <MenuItem value="locationvoiture">Transport de Luxe / Location de voiture de mariage</MenuItem>
+                                                            <MenuItem value="audiovisueLumieres">Location de matériel audiovisuel et Lumières</MenuItem>
+                                                            <MenuItem value="musiciendirect">Musiciens et Groupes en Direct</MenuItem>
+                                                            <MenuItem value="robescostumes">Location de robes de mariée et de costumes</MenuItem>
+                                                            <MenuItem value="maquillagecoiffure">Service de maquillage et coiffure</MenuItem>
+                                                            <MenuItem value="navetteinvites">Service de navette pour les invités</MenuItem>
+                                                            <MenuItem value="photographievideographie">Photographie et Vidéographie</MenuItem>
+                                                            <MenuItem value="traiteurestauration">Service de Traiteur et Restauration</MenuItem>
+                                                            <MenuItem value="gateaumariage">Gâteau de mariage </MenuItem>
+                                                            <MenuItem value="fleurdecoration">Services de Fleurs et Décoration</MenuItem>
+                                                            <MenuItem value="enfants">Service de garde d\'enfants</MenuItem>
+                                                            <MenuItem value="nettoyage">Services de Nettoyage</MenuItem>
+                                                            <MenuItem value="securite">Service de sécurité</MenuItem>
+                                                            <MenuItem value="feuxartifice">Feux d\'artifice</MenuItem>
+
+                                                        </Select>
+                                                    </FormControl>
+                                                </FormGroup>
+
+
+
+                                            </div>
+
+
                                         )}
 
+
+
+
+
+                                        <div className="search-container card-body mb-2 mt-2">
+                                            <button type="button"   onClick={() => handleBuscar()} className="btn btn-primary">
+                                                Filtrettt
+                                            </button>
+
+                                            <button type="button" onClick={handleReset} className="btn btn-secondary mr-2">
+                                                <i className="fas fa-redo" style={{ cursor: 'pointer' }} />
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-
-
-
-
-
-
-
-                            </div>
-
-
-
-
-                        </form>
+                                </form>
                     </Offcanvas.Body>
                 </Navbar.Offcanvas>
             </Container>

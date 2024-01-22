@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import { Button, Container, Form, Nav, Navbar, Offcanvas } from 'react-bootstrap';
 import { Link } from 'react-router-dom'
 import { GLOBALTYPES } from '../../redux/actions/globalTypes'
@@ -12,7 +12,7 @@ import { getPosts, POST_TYPES } from '../../redux/actions/postAction';
 import { getDataAPI } from '../../utils/fetchData';
 
 import SearchPosts from '../SearchPosts';
-import Preciosalaaa from '../ranges/Preciosalaaa';
+ 
 
 import { SERVICIO_TYPES } from '../../redux/actions/servicioAction';
 
@@ -22,108 +22,114 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 
-
-
-
 const Header = ({ selectedCategory, setSelectedCategory }) => {
 
-    const { auth, theme, homePosts, homeServicios } = useSelector(state => state)
+    const { auth, theme, homePosts,homeServicios } = useSelector(state => state)
     const expand = false;
 
 
-    const [servicioData, setServiciodata] = useState('');
-
-    const [currentCategoria, setCurrentCategoria] = useState('posts');
-
-    const [showSalaForm, setShowSalaForm] = useState(false);
-    const [showServiciosForm, setShowServiciosForm] = useState(false);
     const dispatch = useDispatch()
 
+    const [currentCategoria, setCurrentCategoria] = useState('posts'); // Agregué esta línea
+
+    const [showSalaForm, setShowSalaForm] = useState(false); // Cambié a false
+    const [showServiciosForm, setShowServiciosForm] = useState(false); // Cambié a false
+    const [servicioData, setServiciodata] = useState({ optionservicios: [] });
+    
+  
+    
+    const [, setSearchResults] = useState([]);
+    const [, setTotalResults] = useState(0);
+    const [showSearchFields, setShowSearchFields] = useState(false);
+    const [contentValue, setContent] = useState('');
     const [tipoTransaccion, setTipoTransaccion] = useState('');
 
-
-    const [contentValue, setContent] = useState('');
+ 
 
     const [wilayaValue, setWilayaValue] = useState('');
     const [communeValue, setCommuneValue] = useState('');
 
-    const [prixsalle, setPrixsalle] = useState([100, 3000]);
+    const [optionservicios, setoptiosservicios] = useState([100, 3000]);
 
     const [personNameValue, setPersonName] = useState([]);
     const [eventosValue, setEventos] = useState([]);
-
-
-
-    const Preciosala = (value) => {
-        setPrixsalle(value);
-    };
-
-
+  
     const handleReset = () => {
-        setContent('');
-        setWilayaValue('');
-        setCommuneValue('');
-        setPersonName('');
+      setContent('');
+ 
+ 
 
-        setEventos('');
-
-        setPrixsalle([10, 300]);
-
-        dispatch(getPosts(auth.token));
-    };
+      dispatch(getPosts(auth.token));
+  };
 
 
 
 
 
 
-
-    const handleBuscar = async () => {
-        try {
-            let url = `/${currentCategoria}?limit=${currentCategoria === 'servicios' ? homeServicios.page * 9 : homePosts.page * 9}`;
-    
-            if (currentCategoria === 'servicios') {
-                if (servicioData.optionservicios && servicioData.optionservicios.length > 0) {
-                    url += `&optionservicios=${encodeURIComponent(servicioData.optionservicios.join(','))}`;
-                }
-            } else {
-                url = `/posts?limit=${homePosts.page * 9}`;
-                if (tipoTransaccion) url += `&ventalocation=${tipoTransaccion}`;
-                if (prixsalle[0] !== 10 || prixsalle[1] !== 300) url += `&minprixsalle=${prixsalle[0]}&maxprixsalle=${prixsalle[1]}`;
-                if (wilayaValue) url += `&wilaya=${wilayaValue}`;
-                if (contentValue) url += `&content=${contentValue}`;
-                if (communeValue) url += `&commune=${communeValue}`;
-                if (personNameValue) url += `&personName=${personNameValue}`;
-                if (eventosValue) url += `&eventos=${eventosValue}`;
-            }
-    
-            setSelectedCategory(currentCategoria);
-    
-            const response = await getDataAPI(url, auth.token);
-    
-            dispatch({
-                type: currentCategoria === 'servicios' ? SERVICIO_TYPES.GET_SERVICIOS : POST_TYPES.GET_POSTS,
-                payload: { ...response.data, page: currentCategoria === 'servicios' ? homeServicios.page + 1 : homePosts.page + 1 },
-            });
-        } catch (error) {
-            console.error(error);
+  const handleBuscar = async () => {
+    try {
+      let url;
+      let dispatchType;
+  
+      if (currentCategoria === 'servicios') {
+        url = `/servicios?limit=${homeServicios.page * 9}`;
+  
+  
+        // Verifica si hay alguna opción seleccionada en optionservicios
+        if (servicioData.optionservicios && servicioData.optionservicios.length > 0) {
+          url += `&optionservicios=${encodeURIComponent(servicioData.optionservicios.join(','))}`;
         }
-    };
-    
-    const handleCategoryChange = (category) => {
-        setShowSalaForm(category === 'posts');
-        setShowServiciosForm(category === 'servicios');
-        setCurrentCategoria(category);
-    };
-
-
-
+       
+        dispatchType = SERVICIO_TYPES.GET_SERVICIOS;
+      } else {
+        url = `/posts?limit=${homePosts.page * 9}`;
+  
+        if (tipoTransaccion) url += `&ventalocation=${tipoTransaccion}`;
+        // Agrega otras condiciones según sea necesario para la categoría "posts"
+  
+        dispatchType = POST_TYPES.GET_POSTS;
+      }
+  
+      if (contentValue) {
+        url += `&content=${contentValue}`;
+      }
+  
+      const response = await getDataAPI(url, auth.token);
+  
+      dispatch({
+        type: dispatchType,
+        payload: { ...response.data, page: currentCategoria === 'servicios' ? homeServicios.page + 1 : homePosts.page + 1 },
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+   
+    setContent('');
+  }, [currentCategoria]);
+  const handleChangeCategoria = (categoria) => {
+    setCurrentCategoria(categoria);
+  
+    // Actualizar el estado para mostrar/ocultar formularios
+    if (categoria === 'posts') {
+      setShowSalaForm(true);
+      setShowServiciosForm(false);
+    } else if (categoria === 'servicios') {
+      setShowSalaForm(false);
+      setShowServiciosForm(true);
+    }
+  };
     return (
         <Navbar expand={expand} className="bg-body-tertiary mb-3">
             <Container fluid>
                 <Navbar.Brand href="/" style={{ fontSize: '24px', color: 'blue' }}>Tassili</Navbar.Brand>
 
+
+
                 <SearchPosts />
+
 
                 <Navbar.Toggle aria-controls={`offcanvasNavbar-expand-${expand}`} />
                 <Navbar.Offcanvas
@@ -131,6 +137,8 @@ const Header = ({ selectedCategory, setSelectedCategory }) => {
                     aria-labelledby={`offcanvasNavbarLabel-expand-${expand}`}
                     placement="end"
                 >
+
+
                     <Offcanvas.Header closeButton />
                     <Offcanvas.Body style={{ maxWidth: 'auto' }}>
 
@@ -155,6 +163,7 @@ const Header = ({ selectedCategory, setSelectedCategory }) => {
                                             aria-labelledby="navbarDropdown"
                                             style={{ transform: 'translateX(75px)' }}
                                         >
+
                                         </div>
                                     </li>
 
@@ -304,15 +313,15 @@ const Header = ({ selectedCategory, setSelectedCategory }) => {
                                 </>
                             )}
 
+
+
+
                         </Nav>
 
                         <div className='card-title mt-4  '>
                             <h5>Recherche avancee:</h5>
                         </div>
-                        <div>
-
-                            <div className="card">
-                                <form>
+                        <form>
                                     <div>
                                         <select
                                             value={tipoTransaccion}
@@ -344,22 +353,7 @@ const Header = ({ selectedCategory, setSelectedCategory }) => {
                                                     onChange={(e) => setContent(e.target.value)}
                                                 />
 
-                                                <Preciosalaaa Preciosala={Preciosala} />
-
-                                                <div className='mt-4'>
-                                                  
-                                                   
-                                                    {showServiciosForm && (
-                                                        <Button
-                                                            type="button"
-                                                            onClick={() => handleBuscar()}
-                                                            className="btn btn-primary btn-block"
-                                                        >
-                                                            Filtrar Servicios
-                                                        </Button>
-                                                    )}
-
-                                                </div>
+                                        
                                             </div>
 
                                         )}
@@ -416,7 +410,7 @@ const Header = ({ selectedCategory, setSelectedCategory }) => {
 
                                         <div className="search-container card-body mb-2 mt-2">
                                             <button type="button"   onClick={() => handleBuscar()} className="btn btn-primary">
-                                                Filtre
+                                                Filtrettt
                                             </button>
 
                                             <button type="button" onClick={handleReset} className="btn btn-secondary mr-2">
@@ -425,12 +419,6 @@ const Header = ({ selectedCategory, setSelectedCategory }) => {
                                         </div>
                                     </div>
                                 </form>
-                            </div>
-
-
-                        </div>
-
-
                     </Offcanvas.Body>
                 </Navbar.Offcanvas>
             </Container>

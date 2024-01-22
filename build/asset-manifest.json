@@ -1,30 +1,28 @@
 {
   "files": {
     "main.css": "/static/css/main.391562b0.chunk.css",
-    "main.js": "/static/js/main.2740eaef.chunk.js",
-    "main.js.map": "/static/js/main.2740eaef.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.2f9298fc.js",
-    "runtime-main.js.map": "/static/js/runtime-main.2f9298fc.js.map",
-    "static/css/2.024044e7.chunk.css": "/static/css/2.024044e7.chunk.css",
-    "static/js/2.5885b8ac.chunk.js": "/static/js/2.5885b8ac.chunk.js",
-    "static/js/2.5885b8ac.chunk.js.map": "/static/js/2.5885b8ac.chunk.js.map",
-    "static/js/3.616fba37.chunk.js": "/static/js/3.616fba37.chunk.js",
-    "static/js/3.616fba37.chunk.js.map": "/static/js/3.616fba37.chunk.js.map",
+    "main.js": "/static/js/main.98d55f21.chunk.js",
+    "main.js.map": "/static/js/main.98d55f21.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.f8dcb0d0.js",
+    "runtime-main.js.map": "/static/js/runtime-main.f8dcb0d0.js.map",
+    "static/css/2.d21a7cc9.chunk.css": "/static/css/2.d21a7cc9.chunk.css",
+    "static/js/2.0a941d2d.chunk.js": "/static/js/2.0a941d2d.chunk.js",
+    "static/js/2.0a941d2d.chunk.js.map": "/static/js/2.0a941d2d.chunk.js.map",
+    "static/js/3.a0492ce1.chunk.js": "/static/js/3.a0492ce1.chunk.js",
+    "static/js/3.a0492ce1.chunk.js.map": "/static/js/3.a0492ce1.chunk.js.map",
     "index.html": "/index.html",
-    "static/css/2.024044e7.chunk.css.map": "/static/css/2.024044e7.chunk.css.map",
+    "static/css/2.d21a7cc9.chunk.css.map": "/static/css/2.d21a7cc9.chunk.css.map",
     "static/css/main.391562b0.chunk.css.map": "/static/css/main.391562b0.chunk.css.map",
-    "static/js/2.5885b8ac.chunk.js.LICENSE.txt": "/static/js/2.5885b8ac.chunk.js.LICENSE.txt",
+    "static/js/2.0a941d2d.chunk.js.LICENSE.txt": "/static/js/2.0a941d2d.chunk.js.LICENSE.txt",
     "static/media/got-it-done-613.89a311f0.mp3": "/static/media/got-it-done-613.89a311f0.mp3",
-    "static/media/home.js22": "/static/media/home.c9e83e15.js22",
     "static/media/loading.gif": "/static/media/loading.792379ce.gif",
-    "static/media/login2.js55": "/static/media/login2.cad20093.js55",
     "static/media/ringring.278d7816.mp3": "/static/media/ringring.278d7816.mp3"
   },
   "entrypoints": [
-    "static/js/runtime-main.2f9298fc.js",
-    "static/css/2.024044e7.chunk.css",
-    "static/js/2.5885b8ac.chunk.js",
+    "static/js/runtime-main.f8dcb0d0.js",
+    "static/css/2.d21a7cc9.chunk.css",
+    "static/js/2.0a941d2d.chunk.js",
     "static/css/main.391562b0.chunk.css",
-    "static/js/main.2740eaef.chunk.js"
+    "static/js/main.98d55f21.chunk.js"
   ]
 }
